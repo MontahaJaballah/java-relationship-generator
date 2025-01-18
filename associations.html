@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relationship Generator</title>
+</head>
+<body>
+    <h1>Relationship Generator</h1>
+    <p><strong>Note:</strong> Always put the parent class on the right for relationships like parent/child!</p>
+
+    <form>
+        <label for="c1">Class 1:</label>
+        <input type="text" id="c1" name="c1" placeholder="Enter Class 1"><br><br>
+
+        <label for="c2">Class 2:</label>
+        <input type="text" id="c2" name="c2" placeholder="Enter Class 2"><br><br>
+
+        <label for="type">Relationship Type:</label>
+        <select id="type" name="type">
+            <option value="1">1---1 (One-to-One)</option>
+            <option value="2">1---* (One-to-Many)</option>
+            <option value="3">*---1 (Many-to-One)</option>
+            <option value="4">*---* (Many-to-Many)</option>
+            <option value="5">Parent/Child (1---1)</option>
+            <option value="6">Parent/Child (1---*)</option>
+            <option value="7">Parent/Child (*---*)</option>
+        </select><br><br>
+
+        <button type="button" onclick="myFunction()">Generate</button>
+    </form>
+
+    <h2>Results:</h2>
+    <p><strong>Relationship:</strong> <span id="relation"></span></p>
+    <p><strong>Result 1:</strong> <span id="r1"></span></p>
+    <p><strong>Result 2:</strong> <span id="r2"></span></p>
+    <p><strong>Additional Info:</strong> <span id="pf"></span></p>
+
+    <script>
+        function myFunction() {
+            var class1 = document.getElementById("c1").value;
+            var class2 = document.getElementById("c2").value;
+            var typev = document.getElementById("type").value;
+
+            let ptf = "";
+            let res1;
+            let res2;
+            let relation = "";
+
+            switch (typev) {
+                case "1":
+                    relation = "1---1";
+                    res1 = "@OneToOne<br>private " + class2 + " " + class2.toLowerCase() + ";";
+                    res2 = "// No reverse mapping";
+                    break;
+                case "2":
+                    relation = "1---*";
+                    res1 = "@OneToMany(cascade = CascadeType.ALL)<br>private Set&lt;" + class2 + "&gt; " + class2.toLowerCase() + "s;";
+                    res2 = "// No reverse mapping";
+                    break;
+                case "3":
+                    relation = "*---1";
+                    res1 = "@ManyToOne(cascade = CascadeType.ALL)<br>private " + class2 + " " + class2.toLowerCase() + ";";
+                    res2 = "// No reverse mapping";
+                    break;
+                case "4":
+                    relation = "*---*";
+                    res1 = "@ManyToMany(cascade = CascadeType.ALL)<br>private Set&lt;" + class2 + "&gt; " + class2.toLowerCase() + "s;";
+                    res2 = "// No reverse mapping";
+                    break;
+                case "5":
+                    relation = "Parent/Child (1---1)";
+                    ptf = "Parent/Child Relationship";
+                    res1 = "@OneToOne<br>private " + class2 + " " + class2.toLowerCase() + ";";
+                    res2 = "@OneToOne(mappedBy=\"" + class2.toLowerCase() + "\")<br>private " + class1 + " " + class1.toLowerCase() + ";";
+                    break;
+                case "6":
+                    relation = "Parent/Child (1---*)";
+                    res1 = "@ManyToOne<br>private " + class2 + " " + class2.toLowerCase() + ";";
+                    res2 = "@OneToMany(cascade = CascadeType.ALL, mappedBy=\"" + class2.toLowerCase() + "\")<br>private Set&lt;" + class1 + "&gt; " + class1.toLowerCase() + "s;";
+                    break;
+                case "7":
+                    relation = "Parent/Child (*---*)";
+                    ptf = "Parent/Child Relationship";
+                    res1 = "@ManyToMany(cascade = CascadeType.ALL)<br>private Set&lt;" + class2 + "&gt; " + class2.toLowerCase() + "s;";
+                    res2 = "@ManyToMany(mappedBy=\"" + class2.toLowerCase() + "s\", cascade = CascadeType.ALL)<br>private Set&lt;" + class1 + "&gt; " + class1.toLowerCase() + "s;";
+                    break;
+            }
+
+            document.getElementById("relation").innerHTML = relation;
+            document.getElementById("r1").innerHTML = res1;
+            document.getElementById("r2").innerHTML = res2;
+            document.getElementById("pf").innerHTML = ptf;
+        }
+    </script>
+</body>
+</html>
